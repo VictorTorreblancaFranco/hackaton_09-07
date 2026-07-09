@@ -186,24 +186,18 @@ th {
   gap: 8px;
 }
 
-.status-button {
-  background: #ffffff;
-  border: 1px solid #cbd4e1;
-  border-radius: 8px;
-  color: #344054;
-  cursor: pointer;
-  min-height: 36px;
-  padding: 0 10px;
-}
-
-.status-button:hover {
-  background: #f8fafc;
-}
-
 .icon-button {
   min-height: 36px;
   min-width: 36px;
   padding: 0;
+}
+
+.icon-button.success {
+  color: #15803d;
+}
+
+.icon-button.warning {
+  color: #b45309;
 }
 
 .icon-button.danger {

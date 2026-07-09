@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Car, Check, Edit3, RefreshCw, Save, Trash2, User, WalletCards, X } from 'lucide-react';
+import { Car, Check, Edit3, RefreshCw, Save, Trash2, User, WalletCards, Wrench, X } from 'lucide-react';
 import './styles.css';
 
 const today = new Date().toISOString().slice(0, 10);
@@ -341,23 +341,25 @@ function ResourcePanel({ config }) {
                   <button type="button" className="icon-button" onClick={() => edit(item)} title="Editar">
                     <Edit3 size={16} />
                   </button>
-                  {config.key === 'vehiculos' && (
-                    <>
-                      <button
-                        type="button"
-                        className="status-button"
-                        onClick={() => changeVehicleStatus(item.id, 'DISPONIBLE')}
-                      >
-                        Disponible
-                      </button>
-                      <button
-                        type="button"
-                        className="status-button"
-                        onClick={() => changeVehicleStatus(item.id, 'FUERA_SERVICIO')}
-                      >
-                        Fuera servicio
-                      </button>
-                    </>
+                  {config.key === 'vehiculos' && item.estado === 'DISPONIBLE' && (
+                    <button
+                      type="button"
+                      className="icon-button warning"
+                      onClick={() => changeVehicleStatus(item.id, 'FUERA_SERVICIO')}
+                      title="Marcar fuera de servicio"
+                    >
+                      <Wrench size={16} />
+                    </button>
+                  )}
+                  {config.key === 'vehiculos' && item.estado === 'FUERA_SERVICIO' && (
+                    <button
+                      type="button"
+                      className="icon-button success"
+                      onClick={() => changeVehicleStatus(item.id, 'DISPONIBLE')}
+                      title="Marcar disponible"
+                    >
+                      <Check size={16} />
+                    </button>
                   )}
                   <button type="button" className="icon-button danger" onClick={() => remove(item.id)} title="Eliminar">
                     <Trash2 size={16} />
