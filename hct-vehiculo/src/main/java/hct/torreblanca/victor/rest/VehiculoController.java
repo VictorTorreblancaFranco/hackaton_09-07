@@ -52,12 +52,14 @@ public class VehiculoController {
     public Mono<ResponseEntity<Vehiculo>> cambiarEstado(@PathVariable Long id, @RequestParam String estado) {
         return service.cambiarEstado(id, estado)
                 .map(ResponseEntity::ok)
+                .onErrorResume(IllegalStateException.class, error -> Mono.just(ResponseEntity.badRequest().build()))
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public Mono<ResponseEntity<Void>> eliminar(@PathVariable Long id) {
         return service.eliminar(id)
-                .thenReturn(ResponseEntity.noContent().<Void>build());
+                .thenReturn(ResponseEntity.noContent().<Void>build())
+                .onErrorResume(IllegalStateException.class, error -> Mono.just(ResponseEntity.badRequest().build()));
     }
 }

@@ -192,6 +192,12 @@ th {
   padding: 0;
 }
 
+.icon-button:disabled {
+  color: #98a2b3;
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
 .icon-button.success {
   color: #15803d;
 }

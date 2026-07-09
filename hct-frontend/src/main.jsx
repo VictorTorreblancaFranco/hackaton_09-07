@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Car, Check, Edit3, RefreshCw, Save, Trash2, User, WalletCards, Wrench, X } from 'lucide-react';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 import './styles.css';
 
 const today = new Date().toISOString().slice(0, 10);
@@ -137,6 +139,13 @@ function formatCell(config, field, value) {
   return value;
 }
 
+function statusLabel(estado) {
+  if (estado === 'DISPONIBLE') return 'disponible';
+  if (estado === 'FUERA_SERVICIO') return 'fuera de servicio';
+  if (estado === 'EN_ALQUILER') return 'en alquiler';
+  return estado.toLowerCase();
+}
+
 function normalizeValue(type, value) {
   if (type === 'number') {
     return value === '' ? '' : Number(value);
@@ -194,16 +203,27 @@ function ResourcePanel({ config }) {
     });
   }
 
-  async function changeVehicleStatus(id, estado) {
+  async function changeVehicleStatus(item, estado) {
+    const result = await Swal.fire({
+      title: 'Confirmar cambio',
+      text: `El vehiculo pasara a ${statusLabel(estado)}.`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Confirmar',
+      cancelButtonText: 'Cancelar'
+    });
+    if (!result.isConfirmed) return;
+
     setLoading(true);
     setMessage('');
     try {
-      const response = await fetch(`${config.url}/${id}/estado?estado=${estado}`, { method: 'PUT' });
+      const response = await fetch(`${config.url}/${item.id}/estado?estado=${estado}`, { method: 'PUT' });
       if (!response.ok) throw new Error();
       await loadItems();
       setMessage('Estado actualizado.');
     } catch (error) {
       setMessage('');
+      Swal.fire('No permitido', 'El vehiculo tiene un alquiler vigente.', 'warning');
     } finally {
       setLoading(false);
     }
@@ -250,16 +270,33 @@ function ResourcePanel({ config }) {
     }
   }
 
-  async function remove(id) {
+  async function remove(item) {
+    if (config.key === 'vehiculos' && item.estado === 'EN_ALQUILER') {
+      Swal.fire('No permitido', 'El vehiculo tiene un alquiler vigente.', 'warning');
+      return;
+    }
+
+    const result = await Swal.fire({
+      title: 'Confirmar eliminacion',
+      text: 'El registro se eliminara.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Eliminar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#dc2626'
+    });
+    if (!result.isConfirmed) return;
+
     setLoading(true);
     setMessage('');
     try {
-      const response = await fetch(`${config.url}/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${config.url}/${item.id}`, { method: 'DELETE' });
       if (!response.ok && response.status !== 204) throw new Error();
       await loadItems();
       setMessage('Registro eliminado.');
     } catch (error) {
       setMessage('');
+      Swal.fire('No permitido', 'El registro no se puede eliminar en este momento.', 'warning');
     } finally {
       setLoading(false);
     }
@@ -345,7 +382,7 @@ function ResourcePanel({ config }) {
                     <button
                       type="button"
                       className="icon-button warning"
-                      onClick={() => changeVehicleStatus(item.id, 'FUERA_SERVICIO')}
+                      onClick={() => changeVehicleStatus(item, 'FUERA_SERVICIO')}
                       title="Marcar fuera de servicio"
                     >
                       <Wrench size={16} />
@@ -355,13 +392,19 @@ function ResourcePanel({ config }) {
                     <button
                       type="button"
                       className="icon-button success"
-                      onClick={() => changeVehicleStatus(item.id, 'DISPONIBLE')}
+                      onClick={() => changeVehicleStatus(item, 'DISPONIBLE')}
                       title="Marcar disponible"
                     >
                       <Check size={16} />
                     </button>
                   )}
-                  <button type="button" className="icon-button danger" onClick={() => remove(item.id)} title="Eliminar">
+                  <button
+                    type="button"
+                    className="icon-button danger"
+                    onClick={() => remove(item)}
+                    title={config.key === 'vehiculos' && item.estado === 'EN_ALQUILER' ? 'Vehiculo en alquiler' : 'Eliminar'}
+                    disabled={config.key === 'vehiculos' && item.estado === 'EN_ALQUILER'}
+                  >
                     <Trash2 size={16} />
                   </button>
                 </td>
