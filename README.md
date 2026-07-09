@@ -108,10 +108,11 @@ curl -X POST http://localhost:8081/api/vehiculos \
     "modelo": "Corolla",
     "anio": 2026,
     "color": "Blanco",
-    "precioPorDia": 150,
-    "estado": "DISPONIBLE"
+    "precioPorDia": 150
   }'
 ```
+
+El estado se asigna automaticamente como `DISPONIBLE`.
 
 ### Crear cliente
 
@@ -124,10 +125,11 @@ curl -X POST http://localhost:8082/api/clientes \
     "apellidos": "Lopez Sanchez",
     "celular": "987654321",
     "correo": "miguel@gmail.com",
-    "licencia": "Q12345678",
-    "estado": "ACTIVO"
+    "licencia": "Q12345678"
   }'
 ```
+
+El estado se asigna automaticamente como `ACTIVO`.
 
 ### Crear alquiler
 
@@ -140,10 +142,11 @@ curl -X POST http://localhost:8083/api/alquileres \
     "dias": 3,
     "fechaInicio": "2026-07-03",
     "fechaFin": "2026-07-06",
-    "total": 720,
-    "estado": "ACTIVO"
+    "total": 720
   }'
 ```
+
+El estado se asigna automaticamente como `ACTIVO`.
 
 ## Operaciones CRUD
 

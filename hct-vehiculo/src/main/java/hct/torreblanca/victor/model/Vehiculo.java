@@ -44,5 +44,5 @@ public class Vehiculo {
     private BigDecimal precioPorDia;
 
     @NotBlank
-    private String estado;
+    private String estado = "DISPONIBLE";
 }

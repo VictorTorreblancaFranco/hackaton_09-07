@@ -23,7 +23,15 @@ const services = {
       ['modelo', 'Modelo'],
       ['anio', 'Anio', 'number'],
       ['color', 'Color'],
-      ['precioPorDia', 'Precio por dia', 'number'],
+      ['precioPorDia', 'Precio por dia', 'number']
+    ],
+    tableFields: [
+      ['placa', 'Placa'],
+      ['marca', 'Marca'],
+      ['modelo', 'Modelo'],
+      ['anio', 'Anio'],
+      ['color', 'Color'],
+      ['precioPorDia', 'Precio por dia'],
       ['estado', 'Estado']
     ]
   },
@@ -46,6 +54,14 @@ const services = {
       ['apellidos', 'Apellidos'],
       ['celular', 'Celular'],
       ['correo', 'Correo', 'email'],
+      ['licencia', 'Licencia']
+    ],
+    tableFields: [
+      ['dni', 'DNI'],
+      ['nombres', 'Nombres'],
+      ['apellidos', 'Apellidos'],
+      ['celular', 'Celular'],
+      ['correo', 'Correo'],
       ['licencia', 'Licencia'],
       ['estado', 'Estado']
     ]
@@ -69,7 +85,15 @@ const services = {
       ['dias', 'Dias', 'number'],
       ['fechaInicio', 'Fecha inicio', 'date'],
       ['fechaFin', 'Fecha fin', 'date'],
-      ['total', 'Total', 'number'],
+      ['total', 'Total', 'number']
+    ],
+    tableFields: [
+      ['clienteId', 'Cliente ID'],
+      ['vehiculoId', 'Vehiculo ID'],
+      ['dias', 'Dias'],
+      ['fechaInicio', 'Fecha inicio'],
+      ['fechaFin', 'Fecha fin'],
+      ['total', 'Total'],
       ['estado', 'Estado']
     ]
   }
@@ -89,17 +113,18 @@ function ResourcePanel({ config }) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
-  const visibleFields = useMemo(() => config.fields.map(([key]) => key), [config.fields]);
+  const tableFields = config.tableFields ?? config.fields;
+  const visibleFields = useMemo(() => tableFields.map(([key]) => key), [tableFields]);
 
   async function loadItems() {
     setLoading(true);
     setMessage('');
     try {
       const response = await fetch(config.url);
-      if (!response.ok) throw new Error('Error al listar registros');
+      if (!response.ok) throw new Error();
       setItems(await response.json());
     } catch (error) {
-      setMessage('No se pudo cargar la informacion.');
+      setItems([]);
     } finally {
       setLoading(false);
     }
@@ -122,7 +147,7 @@ function ResourcePanel({ config }) {
       config.fields.reduce((next, [key]) => {
         next[key] = item[key] ?? '';
         return next;
-      }, {})
+      }, { ...config.empty })
     );
   }
 
@@ -142,12 +167,12 @@ function ResourcePanel({ config }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
       });
-      if (!response.ok) throw new Error('No se pudo guardar');
+      if (!response.ok) throw new Error();
       cancel();
       await loadItems();
       setMessage(editingId ? 'Registro actualizado.' : 'Registro creado.');
     } catch (error) {
-      setMessage('No se pudo guardar el registro.');
+      setMessage('');
     } finally {
       setLoading(false);
     }
@@ -158,11 +183,11 @@ function ResourcePanel({ config }) {
     setMessage('');
     try {
       const response = await fetch(`${config.url}/${id}`, { method: 'DELETE' });
-      if (!response.ok && response.status !== 204) throw new Error('No se pudo eliminar');
+      if (!response.ok && response.status !== 204) throw new Error();
       await loadItems();
       setMessage('Registro eliminado.');
     } catch (error) {
-      setMessage('No se pudo eliminar el registro.');
+      setMessage('');
     } finally {
       setLoading(false);
     }
@@ -209,7 +234,7 @@ function ResourcePanel({ config }) {
           <thead>
             <tr>
               <th>ID</th>
-              {config.fields.map(([, label]) => (
+              {tableFields.map(([, label]) => (
                 <th key={label}>{label}</th>
               ))}
               <th>Acciones</th>
@@ -234,7 +259,7 @@ function ResourcePanel({ config }) {
             ))}
             {!items.length && (
               <tr>
-                <td colSpan={config.fields.length + 2} className="empty">
+                <td colSpan={tableFields.length + 2} className="empty">
                   {loading ? 'Cargando...' : 'Sin registros'}
                 </td>
               </tr>

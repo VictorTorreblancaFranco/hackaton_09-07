@@ -23,6 +23,7 @@ public class VehiculoService {
 
     public Mono<Vehiculo> crear(Vehiculo vehiculo) {
         vehiculo.setId(null);
+        vehiculo.setEstado("DISPONIBLE");
         return repository.save(vehiculo);
     }
 
@@ -30,6 +31,7 @@ public class VehiculoService {
         return repository.findById(id)
                 .flatMap(actual -> {
                     vehiculo.setId(actual.getId());
+                    vehiculo.setEstado(actual.getEstado());
                     return repository.save(vehiculo);
                 });
     }

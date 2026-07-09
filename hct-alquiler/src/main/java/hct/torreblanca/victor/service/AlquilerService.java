@@ -23,6 +23,7 @@ public class AlquilerService {
 
     public Mono<Alquiler> crear(Alquiler alquiler) {
         alquiler.setId(null);
+        alquiler.setEstado("ACTIVO");
         return repository.save(alquiler);
     }
 
@@ -30,6 +31,7 @@ public class AlquilerService {
         return repository.findById(id)
                 .flatMap(actual -> {
                     alquiler.setId(actual.getId());
+                    alquiler.setEstado(actual.getEstado());
                     return repository.save(alquiler);
                 });
     }

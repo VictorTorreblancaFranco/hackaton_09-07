@@ -64,7 +64,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"placa\": \"ABC-123\",\n  \"marca\": \"Toyota\",\n  \"modelo\": \"Corolla\",\n  \"anio\": 2026,\n  \"color\": \"Blanco\",\n  \"precioPorDia\": 150,\n  \"estado\": \"DISPONIBLE\"\n}"
+              "raw": "{\n  \"placa\": \"ABC-123\",\n  \"marca\": \"Toyota\",\n  \"modelo\": \"Corolla\",\n  \"anio\": 2026,\n  \"color\": \"Blanco\",\n  \"precioPorDia\": 150\n}"
             },
             "url": "{{vehiculo_url}}",
             "description": "Crea un vehiculo nuevo. La placa es texto simple, el anio es numerico y precioPorDia es decimal."
@@ -82,7 +82,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"placa\": \"ABC-123\",\n  \"marca\": \"Toyota\",\n  \"modelo\": \"Corolla\",\n  \"anio\": 2026,\n  \"color\": \"Negro\",\n  \"precioPorDia\": 180,\n  \"estado\": \"DISPONIBLE\"\n}"
+              "raw": "{\n  \"placa\": \"ABC-123\",\n  \"marca\": \"Toyota\",\n  \"modelo\": \"Corolla\",\n  \"anio\": 2026,\n  \"color\": \"Negro\",\n  \"precioPorDia\": 180\n}"
             },
             "url": "{{vehiculo_url}}/{{vehiculo_id}}",
             "description": "Actualiza todos los datos del vehiculo indicado."
@@ -130,7 +130,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"dni\": \"72654321\",\n  \"nombres\": \"Miguel Luis\",\n  \"apellidos\": \"Lopez Sanchez\",\n  \"celular\": \"987654321\",\n  \"correo\": \"miguel@gmail.com\",\n  \"licencia\": \"Q12345678\",\n  \"estado\": \"ACTIVO\"\n}"
+              "raw": "{\n  \"dni\": \"72654321\",\n  \"nombres\": \"Miguel Luis\",\n  \"apellidos\": \"Lopez Sanchez\",\n  \"celular\": \"987654321\",\n  \"correo\": \"miguel@gmail.com\",\n  \"licencia\": \"Q12345678\"\n}"
             },
             "url": "{{cliente_url}}",
             "description": "Crea un cliente nuevo. DNI debe tener 8 digitos y celular 9 digitos."
@@ -148,7 +148,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"dni\": \"72654321\",\n  \"nombres\": \"Miguel Luis\",\n  \"apellidos\": \"Lopez Sanchez\",\n  \"celular\": \"999888777\",\n  \"correo\": \"miguel@gmail.com\",\n  \"licencia\": \"Q12345678\",\n  \"estado\": \"ACTIVO\"\n}"
+              "raw": "{\n  \"dni\": \"72654321\",\n  \"nombres\": \"Miguel Luis\",\n  \"apellidos\": \"Lopez Sanchez\",\n  \"celular\": \"999888777\",\n  \"correo\": \"miguel@gmail.com\",\n  \"licencia\": \"Q12345678\"\n}"
             },
             "url": "{{cliente_url}}/{{cliente_id}}",
             "description": "Actualiza todos los datos del cliente indicado."
@@ -196,7 +196,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"clienteId\": 1,\n  \"vehiculoId\": 1,\n  \"dias\": 3,\n  \"fechaInicio\": \"2026-07-03\",\n  \"fechaFin\": \"2026-07-06\",\n  \"total\": 720,\n  \"estado\": \"ACTIVO\"\n}"
+              "raw": "{\n  \"clienteId\": 1,\n  \"vehiculoId\": 1,\n  \"dias\": 3,\n  \"fechaInicio\": \"2026-07-03\",\n  \"fechaFin\": \"2026-07-06\",\n  \"total\": 720\n}"
             },
             "url": "{{alquiler_url}}",
             "description": "Crea un alquiler. Usa clienteId y vehiculoId como referencia a los otros microservicios."
@@ -214,7 +214,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"clienteId\": 1,\n  \"vehiculoId\": 1,\n  \"dias\": 4,\n  \"fechaInicio\": \"2026-07-03\",\n  \"fechaFin\": \"2026-07-07\",\n  \"total\": 960,\n  \"estado\": \"ACTIVO\"\n}"
+              "raw": "{\n  \"clienteId\": 1,\n  \"vehiculoId\": 1,\n  \"dias\": 4,\n  \"fechaInicio\": \"2026-07-03\",\n  \"fechaFin\": \"2026-07-07\",\n  \"total\": 960\n}"
             },
             "url": "{{alquiler_url}}/{{alquiler_id}}",
             "description": "Actualiza todos los datos del alquiler indicado."
@@ -232,4 +232,3 @@
     }
   ]
 }
-

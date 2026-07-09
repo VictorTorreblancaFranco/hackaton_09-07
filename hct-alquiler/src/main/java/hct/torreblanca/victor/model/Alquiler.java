@@ -43,5 +43,5 @@ public class Alquiler {
     private BigDecimal total;
 
     @NotBlank
-    private String estado;
+    private String estado = "ACTIVO";
 }

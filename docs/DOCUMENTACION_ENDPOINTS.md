@@ -105,10 +105,11 @@ Body:
   "modelo": "Corolla",
   "anio": 2026,
   "color": "Blanco",
-  "precioPorDia": 150,
-  "estado": "DISPONIBLE"
+  "precioPorDia": 150
 }
 ```
+
+El campo `estado` no se envia al crear. El sistema lo asigna automaticamente como `DISPONIBLE`.
 
 Validaciones basicas:
 
@@ -118,7 +119,6 @@ Validaciones basicas:
 - `anio`: obligatorio, minimo 2000.
 - `color`: obligatorio.
 - `precioPorDia`: obligatorio, mayor o igual a 1.
-- `estado`: obligatorio.
 
 ### PUT /api/vehiculos/{id}
 
@@ -139,8 +139,7 @@ Body:
   "modelo": "Corolla",
   "anio": 2026,
   "color": "Negro",
-  "precioPorDia": 180,
-  "estado": "DISPONIBLE"
+  "precioPorDia": 180
 }
 ```
 
@@ -221,10 +220,11 @@ Body:
   "apellidos": "Lopez Sanchez",
   "celular": "987654321",
   "correo": "miguel@gmail.com",
-  "licencia": "Q12345678",
-  "estado": "ACTIVO"
+  "licencia": "Q12345678"
 }
 ```
+
+El campo `estado` no se envia al crear. El sistema lo asigna automaticamente como `ACTIVO`.
 
 Validaciones basicas:
 
@@ -234,7 +234,6 @@ Validaciones basicas:
 - `celular`: obligatorio, exactamente 9 digitos.
 - `correo`: obligatorio, formato de correo.
 - `licencia`: obligatorio.
-- `estado`: obligatorio.
 
 ### PUT /api/clientes/{id}
 
@@ -255,8 +254,7 @@ Body:
   "apellidos": "Lopez Sanchez",
   "celular": "999888777",
   "correo": "miguel@gmail.com",
-  "licencia": "Q12345678",
-  "estado": "ACTIVO"
+  "licencia": "Q12345678"
 }
 ```
 
@@ -340,10 +338,11 @@ Body:
   "dias": 3,
   "fechaInicio": "2026-07-03",
   "fechaFin": "2026-07-06",
-  "total": 720,
-  "estado": "ACTIVO"
+  "total": 720
 }
 ```
+
+El campo `estado` no se envia al crear. El sistema lo asigna automaticamente como `ACTIVO`.
 
 Validaciones basicas:
 
@@ -353,7 +352,6 @@ Validaciones basicas:
 - `fechaInicio`: obligatorio.
 - `fechaFin`: obligatorio.
 - `total`: obligatorio, mayor o igual a 1.
-- `estado`: obligatorio.
 
 ### PUT /api/alquileres/{id}
 
@@ -374,8 +372,7 @@ Body:
   "dias": 4,
   "fechaInicio": "2026-07-03",
   "fechaFin": "2026-07-07",
-  "total": 960,
-  "estado": "ACTIVO"
+  "total": 960
 }
 ```
 

@@ -23,6 +23,7 @@ public class ClienteService {
 
     public Mono<Cliente> crear(Cliente cliente) {
         cliente.setId(null);
+        cliente.setEstado("ACTIVO");
         return repository.save(cliente);
     }
 
@@ -30,6 +31,7 @@ public class ClienteService {
         return repository.findById(id)
                 .flatMap(actual -> {
                     cliente.setId(actual.getId());
+                    cliente.setEstado(actual.getEstado());
                     return repository.save(cliente);
                 });
     }

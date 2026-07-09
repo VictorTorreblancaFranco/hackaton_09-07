@@ -40,5 +40,5 @@ public class Cliente {
     private String licencia;
 
     @NotBlank
-    private String estado;
+    private String estado = "ACTIVO";
 }
