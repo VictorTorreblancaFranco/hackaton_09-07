@@ -116,13 +116,7 @@ const services = {
 };
 
 function formatPlate(value) {
-  const clean = value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-  const letters = clean.slice(0, 3).replace(/[^A-Z]/g, '');
-  const numbers = clean.slice(3, 6).replace(/[^0-9]/g, '');
-  if (!numbers) {
-    return letters;
-  }
-  return `${letters}-${numbers}`;
+  return value.toUpperCase().replace(/[^A-Z0-9-]/g, '').slice(0, 6);
 }
 
 function formatOnlyLetters(value) {
@@ -313,9 +307,9 @@ function ResourcePanel({ config }) {
                   type={type}
                   value={form[key]}
                   onChange={(event) => changeField(key, type, event.target.value)}
-                  maxLength={key === 'placa' ? 7 : undefined}
-                  placeholder={key === 'placa' ? 'ABC-123' : undefined}
-                  pattern={key === 'placa' ? '[A-Z]{3}-[0-9]{3}' : key === 'color' ? '[A-Za-z ]+' : undefined}
+                  maxLength={key === 'placa' ? 6 : undefined}
+                  placeholder={key === 'placa' ? 'ABC12' : undefined}
+                  pattern={key === 'placa' ? '.*[A-Z0-9].*' : key === 'color' ? '[A-Za-z ]+' : undefined}
                   min={type === 'number' ? 1 : undefined}
                   required
                 />

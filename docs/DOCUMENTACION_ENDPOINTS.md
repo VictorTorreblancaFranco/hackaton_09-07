@@ -114,7 +114,7 @@ El precio se muestra en el frontend con moneda peruana: `S/`.
 
 Validaciones basicas:
 
-- `placa`: obligatorio, formato `ABC-123`. Son 3 letras, guion y 3 numeros.
+- `placa`: obligatorio. Acepta letras, numeros y guion, maximo 6 caracteres, con al menos una letra o numero.
 - `marca`: obligatorio.
 - `modelo`: obligatorio.
 - `anio`: obligatorio, minimo 2000.
