@@ -117,8 +117,8 @@ const services = {
 
 function formatPlate(value) {
   const clean = value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-  const letters = clean.replace(/[^A-Z]/g, '').slice(0, 3);
-  const numbers = clean.replace(/[^0-9]/g, '').slice(0, 3);
+  const letters = clean.slice(0, 3).replace(/[^A-Z]/g, '');
+  const numbers = clean.slice(3, 6).replace(/[^0-9]/g, '');
   if (!numbers) {
     return letters;
   }
