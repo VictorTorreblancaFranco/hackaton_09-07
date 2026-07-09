@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Car, Check, Edit3, RefreshCw, Save, Trash2, User, WalletCards, Wrench, X } from 'lucide-react';
+import { Car, Check, ChevronDown, Edit3, RefreshCw, Save, Trash2, User, WalletCards, Wrench, X } from 'lucide-react';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import './styles.css';
@@ -169,6 +169,7 @@ function ResourcePanel({ config }) {
   const [form, setForm] = useState(config.empty);
   const [clientes, setClientes] = useState([]);
   const [vehiculos, setVehiculos] = useState([]);
+  const [openPicker, setOpenPicker] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -183,6 +184,10 @@ function ResourcePanel({ config }) {
   const vehiculoSeleccionado = useMemo(
     () => vehiculos.find((vehiculo) => vehiculo.id === Number(form.vehiculoId)),
     [form.vehiculoId, vehiculos]
+  );
+  const clienteSeleccionado = useMemo(
+    () => clientes.find((cliente) => cliente.id === Number(form.clienteId)),
+    [form.clienteId, clientes]
   );
   const alquilerIncompleto = config.key === 'alquileres' && (!form.clienteId || !form.vehiculoId);
 
@@ -277,6 +282,11 @@ function ResourcePanel({ config }) {
     });
   }
 
+  function selectRentalOption(key, value) {
+    changeField(key, 'number', value);
+    setOpenPicker(null);
+  }
+
   async function changeVehicleStatus(item, estado) {
     const result = await Swal.fire({
       title: 'Confirmar cambio',
@@ -316,6 +326,7 @@ function ResourcePanel({ config }) {
   function cancel() {
     setEditingId(null);
     setForm(config.empty);
+    setOpenPicker(null);
     setMessage('');
   }
 
@@ -403,35 +414,69 @@ function ResourcePanel({ config }) {
             <label key={key} className={type === 'picker' ? 'picker-field' : undefined}>
               <span>{label}</span>
               {type === 'picker' && key === 'clienteId' ? (
-                <div className="picker-grid">
-                  {clientesActivos.map((cliente) => (
-                    <button
-                      type="button"
-                      key={cliente.id}
-                      className={Number(form.clienteId) === cliente.id ? 'picker-card selected' : 'picker-card'}
-                      onClick={() => changeField(key, 'number', cliente.id)}
-                    >
-                      <strong>{cliente.nombres} {cliente.apellidos}</strong>
-                      <small>DNI {cliente.dni}</small>
-                    </button>
-                  ))}
-                  {!clientesActivos.length && <p className="empty-inline">Sin clientes activos</p>}
+                <div className="picker-box">
+                  <button
+                    type="button"
+                    className="picker-trigger"
+                    onClick={() => setOpenPicker(openPicker === 'clienteId' ? null : 'clienteId')}
+                  >
+                    <span>
+                      <strong>{clienteSeleccionado ? `${clienteSeleccionado.nombres} ${clienteSeleccionado.apellidos}` : 'Seleccionar cliente'}</strong>
+                      <small>{clienteSeleccionado ? `DNI ${clienteSeleccionado.dni}` : 'Clientes activos'}</small>
+                    </span>
+                    <ChevronDown size={18} />
+                  </button>
+                  {openPicker === 'clienteId' && (
+                    <div className="picker-panel">
+                      {clientesActivos.map((cliente) => (
+                        <button
+                          type="button"
+                          key={cliente.id}
+                          className={Number(form.clienteId) === cliente.id ? 'picker-card selected' : 'picker-card'}
+                          onClick={() => selectRentalOption(key, cliente.id)}
+                        >
+                          <strong>{cliente.nombres} {cliente.apellidos}</strong>
+                          <small>DNI {cliente.dni}</small>
+                        </button>
+                      ))}
+                      {!clientesActivos.length && <p className="empty-inline">Sin clientes activos</p>}
+                    </div>
+                  )}
                 </div>
               ) : type === 'picker' && key === 'vehiculoId' ? (
-                <div className="picker-grid">
-                  {vehiculosDisponibles.map((vehiculo) => (
-                    <button
-                      type="button"
-                      key={vehiculo.id}
-                      className={Number(form.vehiculoId) === vehiculo.id ? 'picker-card selected' : 'picker-card'}
-                      onClick={() => changeField(key, 'number', vehiculo.id)}
-                    >
-                      <strong>{vehiculo.placa}</strong>
-                      <small>{vehiculo.marca} {vehiculo.modelo}</small>
-                      <small>{formatMoney(vehiculo.precioPorDia)} por dia</small>
-                    </button>
-                  ))}
-                  {!vehiculosDisponibles.length && <p className="empty-inline">Sin vehiculos disponibles</p>}
+                <div className="picker-box">
+                  <button
+                    type="button"
+                    className="picker-trigger"
+                    onClick={() => setOpenPicker(openPicker === 'vehiculoId' ? null : 'vehiculoId')}
+                  >
+                    <span>
+                      <strong>{vehiculoSeleccionado ? vehiculoSeleccionado.placa : 'Seleccionar vehiculo'}</strong>
+                      <small>
+                        {vehiculoSeleccionado
+                          ? `${vehiculoSeleccionado.marca} ${vehiculoSeleccionado.modelo} - ${formatMoney(vehiculoSeleccionado.precioPorDia)} por dia`
+                          : 'Vehiculos disponibles'}
+                      </small>
+                    </span>
+                    <ChevronDown size={18} />
+                  </button>
+                  {openPicker === 'vehiculoId' && (
+                    <div className="picker-panel">
+                      {vehiculosDisponibles.map((vehiculo) => (
+                        <button
+                          type="button"
+                          key={vehiculo.id}
+                          className={Number(form.vehiculoId) === vehiculo.id ? 'picker-card selected' : 'picker-card'}
+                          onClick={() => selectRentalOption(key, vehiculo.id)}
+                        >
+                          <strong>{vehiculo.placa}</strong>
+                          <small>{vehiculo.marca} {vehiculo.modelo}</small>
+                          <small>{formatMoney(vehiculo.precioPorDia)} por dia</small>
+                        </button>
+                      ))}
+                      {!vehiculosDisponibles.length && <p className="empty-inline">Sin vehiculos disponibles</p>}
+                    </div>
+                  )}
                 </div>
               ) : type === 'select' ? (
                 <select
