@@ -130,6 +130,21 @@ function formatOnlyLetters(value) {
   return value.replace(/[^A-Za-z ]/g, '');
 }
 
+function formatDigits(value, maxLength) {
+  return value.replace(/\D/g, '').slice(0, maxLength);
+}
+
+function formatPhone(value) {
+  return formatDigits(value, 9);
+}
+
+function formatLicense(value) {
+  const clean = value.toUpperCase().replace(/[^Q0-9]/g, '');
+  const digits = clean.replace(/^Q/, '').replace(/\D/g, '').slice(0, 8);
+  if (!clean) return '';
+  return `Q${digits}`;
+}
+
 function formatMoney(value) {
   if (value === null || value === undefined || value === '') {
     return '';
@@ -264,6 +279,15 @@ function ResourcePanel({ config }) {
       }
       if (key === 'color') {
         return { ...current, color: formatOnlyLetters(value) };
+      }
+      if (key === 'dni') {
+        return { ...current, dni: formatDigits(value, 8) };
+      }
+      if (key === 'celular') {
+        return { ...current, celular: formatPhone(value) };
+      }
+      if (key === 'licencia') {
+        return { ...current, licencia: formatLicense(value) };
       }
       if (key === 'marca') {
         return {
@@ -495,9 +519,21 @@ function ResourcePanel({ config }) {
                   type={type}
                   value={form[key]}
                   onChange={(event) => changeField(key, type, event.target.value)}
-                  maxLength={key === 'placa' ? 6 : undefined}
-                  placeholder={key === 'placa' ? 'ABC12' : undefined}
-                  pattern={key === 'placa' ? '.*[A-Z0-9].*' : key === 'color' ? '[A-Za-z ]+' : undefined}
+                  maxLength={key === 'placa' ? 6 : key === 'dni' ? 8 : key === 'celular' ? 9 : key === 'licencia' ? 9 : undefined}
+                  placeholder={key === 'placa' ? 'ABC12' : key === 'dni' ? '12345678' : key === 'celular' ? '987654321' : key === 'licencia' ? 'Q12345678' : undefined}
+                  pattern={
+                    key === 'placa'
+                      ? '.*[A-Z0-9].*'
+                      : key === 'color'
+                        ? '[A-Za-z ]+'
+                        : key === 'dni'
+                          ? '[0-9]{8}'
+                          : key === 'celular'
+                            ? '9[0-9]{8}'
+                            : key === 'licencia'
+                              ? 'Q[0-9]{8}'
+                              : undefined
+                  }
                   min={type === 'number' ? 1 : undefined}
                   readOnly={config.key === 'alquileres' && (key === 'fechaFin' || key === 'total')}
                   required

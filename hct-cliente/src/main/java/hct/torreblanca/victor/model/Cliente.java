@@ -29,7 +29,7 @@ public class Cliente {
     private String apellidos;
 
     @NotBlank
-    @Pattern(regexp = "^[0-9]{9}$")
+    @Pattern(regexp = "^9[0-9]{8}$")
     private String celular;
 
     @NotBlank
@@ -37,6 +37,7 @@ public class Cliente {
     private String correo;
 
     @NotBlank
+    @Pattern(regexp = "^Q[0-9]{8}$")
     private String licencia;
 
     @NotBlank
