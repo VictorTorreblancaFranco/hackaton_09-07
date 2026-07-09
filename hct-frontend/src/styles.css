@@ -142,6 +142,46 @@ label span {
   font-size: 13px;
 }
 
+.picker-field {
+  grid-column: span 2;
+}
+
+.picker-grid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.picker-card {
+  background: #ffffff;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  color: #344054;
+  cursor: pointer;
+  display: grid;
+  gap: 4px;
+  min-height: 76px;
+  padding: 10px;
+  text-align: left;
+}
+
+.picker-card.selected {
+  background: #eff6ff;
+  border-color: #2563eb;
+  color: #1d4ed8;
+}
+
+.picker-card small,
+.field-help,
+.empty-inline {
+  color: #667085;
+  font-size: 12px;
+}
+
+.empty-inline {
+  margin: 0;
+}
+
 input,
 select {
   border: 1px solid #cbd4e1;
@@ -149,6 +189,10 @@ select {
   min-height: 40px;
   padding: 8px 10px;
   width: 100%;
+}
+
+input:read-only {
+  background: #f8fafc;
 }
 
 input:focus,
@@ -241,5 +285,9 @@ th {
 
   .tabs button {
     flex: 0 0 auto;
+  }
+
+  .picker-field {
+    grid-column: span 1;
   }
 }

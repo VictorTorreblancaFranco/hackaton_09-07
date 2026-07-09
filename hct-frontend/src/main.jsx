@@ -97,8 +97,8 @@ const services = {
       estado: 'ACTIVO'
     },
     fields: [
-      ['clienteId', 'Cliente ID', 'number'],
-      ['vehiculoId', 'Vehiculo ID', 'number'],
+      ['clienteId', 'Cliente', 'picker'],
+      ['vehiculoId', 'Vehiculo', 'picker'],
       ['dias', 'Dias', 'number'],
       ['fechaInicio', 'Fecha inicio', 'date'],
       ['fechaFin', 'Fecha fin', 'date'],
@@ -117,6 +117,11 @@ const services = {
   }
 };
 
+const relatedUrls = {
+  clientes: 'http://localhost:8082/api/clientes',
+  vehiculos: 'http://localhost:8081/api/vehiculos'
+};
+
 function formatPlate(value) {
   return value.toUpperCase().replace(/[^A-Z0-9-]/g, '').slice(0, 6);
 }
@@ -130,6 +135,12 @@ function formatMoney(value) {
     return '';
   }
   return `S/ ${Number(value).toFixed(2)}`;
+}
+
+function addDays(dateText, days) {
+  const date = new Date(`${dateText}T00:00:00`);
+  date.setDate(date.getDate() + Number(days || 0));
+  return date.toISOString().slice(0, 10);
 }
 
 function formatCell(config, field, value) {
@@ -156,12 +167,24 @@ function normalizeValue(type, value) {
 function ResourcePanel({ config }) {
   const [items, setItems] = useState([]);
   const [form, setForm] = useState(config.empty);
+  const [clientes, setClientes] = useState([]);
+  const [vehiculos, setVehiculos] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
   const tableFields = config.tableFields ?? config.fields;
   const visibleFields = useMemo(() => tableFields.map(([key]) => key), [tableFields]);
+  const clientesActivos = useMemo(() => clientes.filter((cliente) => cliente.estado === 'ACTIVO'), [clientes]);
+  const vehiculosDisponibles = useMemo(
+    () => vehiculos.filter((vehiculo) => vehiculo.estado === 'DISPONIBLE' || vehiculo.id === form.vehiculoId),
+    [form.vehiculoId, vehiculos]
+  );
+  const vehiculoSeleccionado = useMemo(
+    () => vehiculos.find((vehiculo) => vehiculo.id === Number(form.vehiculoId)),
+    [form.vehiculoId, vehiculos]
+  );
+  const alquilerIncompleto = config.key === 'alquileres' && (!form.clienteId || !form.vehiculoId);
 
   async function loadItems() {
     setLoading(true);
@@ -177,9 +200,57 @@ function ResourcePanel({ config }) {
     }
   }
 
+  async function loadRelatedData() {
+    if (config.key !== 'alquileres') return;
+    try {
+      const [clientesResponse, vehiculosResponse] = await Promise.all([
+        fetch(relatedUrls.clientes),
+        fetch(relatedUrls.vehiculos)
+      ]);
+      const clientesData = clientesResponse.ok ? await clientesResponse.json() : [];
+      const vehiculosData = vehiculosResponse.ok ? await vehiculosResponse.json() : [];
+      setClientes(clientesData);
+      setVehiculos(vehiculosData);
+      setForm((current) => {
+        const clienteActual = clientesData.find((cliente) => cliente.id === Number(current.clienteId) && cliente.estado === 'ACTIVO');
+        const vehiculoActual = vehiculosData.find((vehiculo) => vehiculo.id === Number(current.vehiculoId) && vehiculo.estado === 'DISPONIBLE');
+        const clienteId = clienteActual?.id ?? clientesData.find((cliente) => cliente.estado === 'ACTIVO')?.id ?? '';
+        const vehiculoId = vehiculoActual?.id ?? vehiculosData.find((vehiculo) => vehiculo.estado === 'DISPONIBLE')?.id ?? '';
+        const vehiculo = vehiculosData.find((item) => item.id === Number(vehiculoId));
+        return {
+          ...current,
+          clienteId,
+          vehiculoId,
+          fechaFin: addDays(current.fechaInicio || today, current.dias || 1),
+          total: vehiculo ? Number(vehiculo.precioPorDia || 0) * Number(current.dias || 1) : current.total
+        };
+      });
+    } catch (error) {
+      setClientes([]);
+      setVehiculos([]);
+    }
+  }
+
   useEffect(() => {
     loadItems();
+    loadRelatedData();
   }, [config.url]);
+
+  function buildRentalForm(current, key, type, value) {
+    const next = {
+      ...current,
+      [key]: normalizeValue(type, value)
+    };
+
+    const vehiculo = vehiculos.find((item) => item.id === Number(next.vehiculoId));
+    if (key === 'dias' || key === 'fechaInicio') {
+      next.fechaFin = addDays(next.fechaInicio || today, next.dias || 1);
+    }
+    if (vehiculo && (key === 'vehiculoId' || key === 'dias')) {
+      next.total = Number(vehiculo.precioPorDia || 0) * Number(next.dias || 1);
+    }
+    return next;
+  }
 
   function changeField(key, type, value) {
     setForm((current) => {
@@ -195,6 +266,9 @@ function ResourcePanel({ config }) {
           marca: value,
           modelo: vehicleModels[value][0]
         };
+      }
+      if (config.key === 'alquileres') {
+        return buildRentalForm(current, key, type, value);
       }
       return {
         ...current,
@@ -262,6 +336,7 @@ function ResourcePanel({ config }) {
       if (!response.ok) throw new Error();
       cancel();
       await loadItems();
+      await loadRelatedData();
       setMessage(editingId ? 'Registro actualizado.' : 'Registro creado.');
     } catch (error) {
       setMessage('');
@@ -316,7 +391,7 @@ function ResourcePanel({ config }) {
                 <X size={18} />
               </button>
             )}
-            <button type="submit" className="primary-button" disabled={loading}>
+            <button type="submit" className="primary-button" disabled={loading || alquilerIncompleto}>
               <Save size={18} />
               Guardar
             </button>
@@ -325,9 +400,40 @@ function ResourcePanel({ config }) {
 
         <div className="fields">
           {config.fields.map(([key, label, type = 'text']) => (
-            <label key={key}>
+            <label key={key} className={type === 'picker' ? 'picker-field' : undefined}>
               <span>{label}</span>
-              {type === 'select' ? (
+              {type === 'picker' && key === 'clienteId' ? (
+                <div className="picker-grid">
+                  {clientesActivos.map((cliente) => (
+                    <button
+                      type="button"
+                      key={cliente.id}
+                      className={Number(form.clienteId) === cliente.id ? 'picker-card selected' : 'picker-card'}
+                      onClick={() => changeField(key, 'number', cliente.id)}
+                    >
+                      <strong>{cliente.nombres} {cliente.apellidos}</strong>
+                      <small>DNI {cliente.dni}</small>
+                    </button>
+                  ))}
+                  {!clientesActivos.length && <p className="empty-inline">Sin clientes activos</p>}
+                </div>
+              ) : type === 'picker' && key === 'vehiculoId' ? (
+                <div className="picker-grid">
+                  {vehiculosDisponibles.map((vehiculo) => (
+                    <button
+                      type="button"
+                      key={vehiculo.id}
+                      className={Number(form.vehiculoId) === vehiculo.id ? 'picker-card selected' : 'picker-card'}
+                      onClick={() => changeField(key, 'number', vehiculo.id)}
+                    >
+                      <strong>{vehiculo.placa}</strong>
+                      <small>{vehiculo.marca} {vehiculo.modelo}</small>
+                      <small>{formatMoney(vehiculo.precioPorDia)} por dia</small>
+                    </button>
+                  ))}
+                  {!vehiculosDisponibles.length && <p className="empty-inline">Sin vehiculos disponibles</p>}
+                </div>
+              ) : type === 'select' ? (
                 <select
                   value={form[key]}
                   onChange={(event) => changeField(key, type, event.target.value)}
@@ -348,8 +454,12 @@ function ResourcePanel({ config }) {
                   placeholder={key === 'placa' ? 'ABC12' : undefined}
                   pattern={key === 'placa' ? '.*[A-Z0-9].*' : key === 'color' ? '[A-Za-z ]+' : undefined}
                   min={type === 'number' ? 1 : undefined}
+                  readOnly={config.key === 'alquileres' && (key === 'fechaFin' || key === 'total')}
                   required
                 />
+              )}
+              {config.key === 'alquileres' && key === 'total' && vehiculoSeleccionado && (
+                <small className="field-help">{formatMoney(vehiculoSeleccionado.precioPorDia)} x {form.dias || 1} dias</small>
               )}
             </label>
           ))}

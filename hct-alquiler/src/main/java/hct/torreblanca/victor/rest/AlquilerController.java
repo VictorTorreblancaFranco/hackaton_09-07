@@ -36,14 +36,17 @@ public class AlquilerController {
     }
 
     @PostMapping
-    public Mono<Alquiler> crear(@Valid @RequestBody Alquiler alquiler) {
-        return service.crear(alquiler);
+    public Mono<ResponseEntity<Alquiler>> crear(@Valid @RequestBody Alquiler alquiler) {
+        return service.crear(alquiler)
+                .map(ResponseEntity::ok)
+                .onErrorResume(IllegalStateException.class, error -> Mono.just(ResponseEntity.badRequest().build()));
     }
 
     @PutMapping("/{id}")
     public Mono<ResponseEntity<Alquiler>> actualizar(@PathVariable Long id, @Valid @RequestBody Alquiler alquiler) {
         return service.actualizar(id, alquiler)
                 .map(ResponseEntity::ok)
+                .onErrorResume(IllegalStateException.class, error -> Mono.just(ResponseEntity.badRequest().build()))
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
