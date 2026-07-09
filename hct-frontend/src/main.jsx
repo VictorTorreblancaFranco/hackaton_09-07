@@ -96,10 +96,10 @@ function ResourcePanel({ config }) {
     setMessage('');
     try {
       const response = await fetch(config.url);
-      if (!response.ok) throw new Error('No se pudo listar');
+      if (!response.ok) throw new Error('Error al listar registros');
       setItems(await response.json());
     } catch (error) {
-      setMessage('Revisa que el microservicio este prendido.');
+      setMessage('No se pudo cargar la informacion.');
     } finally {
       setLoading(false);
     }
@@ -147,7 +147,7 @@ function ResourcePanel({ config }) {
       await loadItems();
       setMessage(editingId ? 'Registro actualizado.' : 'Registro creado.');
     } catch (error) {
-      setMessage('No se pudo guardar. Verifica los datos basicos.');
+      setMessage('No se pudo guardar el registro.');
     } finally {
       setLoading(false);
     }
@@ -162,7 +162,7 @@ function ResourcePanel({ config }) {
       await loadItems();
       setMessage('Registro eliminado.');
     } catch (error) {
-      setMessage('No se pudo eliminar.');
+      setMessage('No se pudo eliminar el registro.');
     } finally {
       setLoading(false);
     }
@@ -293,4 +293,3 @@ function App() {
 }
 
 createRoot(document.getElementById('root')).render(<App />);
-

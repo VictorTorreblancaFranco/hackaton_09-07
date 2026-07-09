@@ -74,6 +74,27 @@ Cada backend tiene una clase `CorsConfig` para permitir llamadas desde:
 http://localhost:5173
 ```
 
+Importante: el frontend se ejecuta en el navegador. Por eso, cuando esta en local, el navegador llama a los servicios por `localhost`.
+
+Flujo local:
+
+```text
+Navegador -> React localhost:5173
+React     -> Vehiculos localhost:8081
+React     -> Clientes localhost:8082
+React     -> Alquileres localhost:8083
+```
+
+Si se usa Kubernetes sin Ingress ni gateway, se puede probar con port-forward para conservar las mismas URLs:
+
+```bash
+kubectl port-forward svc/hct-vehiculo-service 8081:8081 -n hct-alquiler-vehiculos
+kubectl port-forward svc/hct-cliente-service 8082:8082 -n hct-alquiler-vehiculos
+kubectl port-forward svc/hct-alquiler-service 8083:8083 -n hct-alquiler-vehiculos
+```
+
+Asi el frontend puede seguir llamando a `localhost:8081`, `localhost:8082` y `localhost:8083`.
+
 ## Ejemplos para probar
 
 ### Crear vehiculo
@@ -146,6 +167,12 @@ Archivos incluidos:
 - `manifest-alquiler/`: manifiestos Kubernetes del microservicio alquiler.
 - `manifest-frontend/`: manifiestos Kubernetes del frontend.
 
+Google Doc de despliegue:
+
+```text
+https://docs.google.com/document/d/10jE1MBeyp4acSxOPNWVpVo6mHkI4QU021Pbc7iWIcUo/edit
+```
+
 Para usar Postman:
 
 1. Abrir Postman.
@@ -200,6 +227,8 @@ El frontend queda expuesto por NodePort:
 ```text
 http://localhost:30080
 ```
+
+Para que el frontend desplegado pueda consultar a los backends durante una demo local, usar port-forward de los 3 servicios backend o exponerlos tambien por NodePort/Ingress.
 
 ## Nota sobre JDK 26
 

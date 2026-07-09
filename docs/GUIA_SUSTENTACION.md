@@ -15,6 +15,23 @@ Frontend:
 
 - `hct-frontend`: interfaz React para registrar, listar, editar y eliminar datos.
 
+## Como se conecta el frontend
+
+El frontend no se conecta a PostgreSQL.
+El frontend consume endpoints HTTP de los microservicios.
+
+```text
+React -> Vehiculos  -> http://localhost:8081/api/vehiculos
+React -> Clientes   -> http://localhost:8082/api/clientes
+React -> Alquileres -> http://localhost:8083/api/alquileres
+```
+
+Luego cada microservicio se conecta a PostgreSQL.
+
+```text
+Frontend React -> Microservicios WebFlux -> PostgreSQL Neon
+```
+
 ## Por que son microservicios
 
 Son microservicios porque cada proyecto corre separado, tiene su propio puerto y su propia responsabilidad.
