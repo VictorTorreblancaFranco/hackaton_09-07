@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hct-vehiculo-deployment
+  namespace: hct-alquiler-vehiculos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hct-vehiculo
+  template:
+    metadata:
+      labels:
+        app: hct-vehiculo
+    spec:
+      containers:
+        - name: hct-vehiculo
+          image: victortorreblancafranco/hct-vehiculo:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8081
+          envFrom:
+            - secretRef:
+                name: hct-vehiculo-secret
+

@@ -141,6 +141,10 @@ Archivos incluidos:
 - `docs/DOCUMENTACION_ENDPOINTS.md`: explica que hace cada endpoint.
 - `docs/GUIA_SUSTENTACION.md`: resumen corto para exponer el proyecto.
 - `postman/HCT-Alquiler-Vehiculos.postman_collection.json`: coleccion Postman con requests de los 3 servicios.
+- `manifest-vehiculo/`: manifiestos Kubernetes del microservicio vehiculo.
+- `manifest-cliente/`: manifiestos Kubernetes del microservicio cliente.
+- `manifest-alquiler/`: manifiestos Kubernetes del microservicio alquiler.
+- `manifest-frontend/`: manifiestos Kubernetes del frontend.
 
 Para usar Postman:
 
@@ -148,6 +152,54 @@ Para usar Postman:
 2. Importar el archivo `HCT-Alquiler-Vehiculos.postman_collection.json`.
 3. Prender los 3 microservicios.
 4. Ejecutar primero Crear vehiculo, luego Crear cliente y al final Crear alquiler.
+
+## Docker
+
+Cada proyecto tiene su `Dockerfile`.
+
+Ejemplo para construir imagenes:
+
+```bash
+docker build -t victortorreblancafranco/hct-vehiculo:latest hct-vehiculo
+docker build -t victortorreblancafranco/hct-cliente:latest hct-cliente
+docker build -t victortorreblancafranco/hct-alquiler:latest hct-alquiler
+docker build -t victortorreblancafranco/hct-frontend:latest hct-frontend
+```
+
+Ejemplo para subir a DockerHub:
+
+```bash
+docker push victortorreblancafranco/hct-vehiculo:latest
+docker push victortorreblancafranco/hct-cliente:latest
+docker push victortorreblancafranco/hct-alquiler:latest
+docker push victortorreblancafranco/hct-frontend:latest
+```
+
+## Kubernetes
+
+Antes de aplicar los manifiestos, cambiar `TU_PASSWORD` en los archivos `secret.yml`.
+
+Aplicar manifiestos:
+
+```bash
+kubectl apply -f manifest-vehiculo/
+kubectl apply -f manifest-cliente/
+kubectl apply -f manifest-alquiler/
+kubectl apply -f manifest-frontend/
+```
+
+Verificar pods y servicios:
+
+```bash
+kubectl get pods -n hct-alquiler-vehiculos
+kubectl get svc -n hct-alquiler-vehiculos
+```
+
+El frontend queda expuesto por NodePort:
+
+```text
+http://localhost:30080
+```
 
 ## Nota sobre JDK 26
 

@@ -153,3 +153,60 @@ Cada carpeta tiene:
 - Crear
 - Actualizar
 - Eliminar
+
+## Docker
+
+Cada microservicio y el frontend tienen un `Dockerfile`.
+El objetivo es convertir cada proyecto en una imagen para poder desplegarla.
+
+Imagenes usadas en los manifiestos:
+
+```text
+victortorreblancafranco/hct-vehiculo:latest
+victortorreblancafranco/hct-cliente:latest
+victortorreblancafranco/hct-alquiler:latest
+victortorreblancafranco/hct-frontend:latest
+```
+
+## Kubernetes
+
+Se agregaron 4 carpetas de manifiestos:
+
+```text
+manifest-vehiculo/
+manifest-cliente/
+manifest-alquiler/
+manifest-frontend/
+```
+
+Cada carpeta tiene los 4 archivos pedidos:
+
+```text
+namespace.yml
+secret.yml
+service.yml
+deployment.yml
+```
+
+Explicacion simple:
+
+- `namespace`: separa los recursos del proyecto.
+- `secret`: guarda variables sensibles como usuario y password de base de datos.
+- `service`: permite acceder al pod dentro del cluster.
+- `deployment`: crea y mantiene corriendo el contenedor.
+
+Comandos:
+
+```bash
+kubectl apply -f manifest-vehiculo/
+kubectl apply -f manifest-cliente/
+kubectl apply -f manifest-alquiler/
+kubectl apply -f manifest-frontend/
+```
+
+Verificar:
+
+```bash
+kubectl get pods -n hct-alquiler-vehiculos
+kubectl get svc -n hct-alquiler-vehiculos
+```
