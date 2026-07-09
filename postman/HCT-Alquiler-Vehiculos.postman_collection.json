@@ -1,0 +1,235 @@
+{
+  "info": {
+    "_postman_id": "5a985c41-7e15-45c1-a36c-hct-basic-demo",
+    "name": "HCT Alquiler de Vehiculos - Microservicios WebFlux",
+    "description": "Coleccion basica para probar los 3 microservicios: vehiculos, clientes y alquileres.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "vehiculo_url",
+      "value": "http://localhost:8081/api/vehiculos"
+    },
+    {
+      "key": "cliente_url",
+      "value": "http://localhost:8082/api/clientes"
+    },
+    {
+      "key": "alquiler_url",
+      "value": "http://localhost:8083/api/alquileres"
+    },
+    {
+      "key": "vehiculo_id",
+      "value": "1"
+    },
+    {
+      "key": "cliente_id",
+      "value": "1"
+    },
+    {
+      "key": "alquiler_id",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Vehiculo CRUD",
+      "description": "Microservicio maestro para registrar vehiculos.",
+      "item": [
+        {
+          "name": "Listar vehiculos",
+          "request": {
+            "method": "GET",
+            "url": "{{vehiculo_url}}",
+            "description": "Devuelve todos los vehiculos registrados."
+          }
+        },
+        {
+          "name": "Buscar vehiculo por ID",
+          "request": {
+            "method": "GET",
+            "url": "{{vehiculo_url}}/{{vehiculo_id}}",
+            "description": "Busca un vehiculo usando su id."
+          }
+        },
+        {
+          "name": "Crear vehiculo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"placa\": \"ABC-123\",\n  \"marca\": \"Toyota\",\n  \"modelo\": \"Corolla\",\n  \"anio\": 2026,\n  \"color\": \"Blanco\",\n  \"precioPorDia\": 150,\n  \"estado\": \"DISPONIBLE\"\n}"
+            },
+            "url": "{{vehiculo_url}}",
+            "description": "Crea un vehiculo nuevo. La placa es texto simple, el anio es numerico y precioPorDia es decimal."
+          }
+        },
+        {
+          "name": "Actualizar vehiculo",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"placa\": \"ABC-123\",\n  \"marca\": \"Toyota\",\n  \"modelo\": \"Corolla\",\n  \"anio\": 2026,\n  \"color\": \"Negro\",\n  \"precioPorDia\": 180,\n  \"estado\": \"DISPONIBLE\"\n}"
+            },
+            "url": "{{vehiculo_url}}/{{vehiculo_id}}",
+            "description": "Actualiza todos los datos del vehiculo indicado."
+          }
+        },
+        {
+          "name": "Eliminar vehiculo",
+          "request": {
+            "method": "DELETE",
+            "url": "{{vehiculo_url}}/{{vehiculo_id}}",
+            "description": "Elimina un vehiculo por id."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cliente CRUD",
+      "description": "Microservicio maestro para registrar clientes.",
+      "item": [
+        {
+          "name": "Listar clientes",
+          "request": {
+            "method": "GET",
+            "url": "{{cliente_url}}",
+            "description": "Devuelve todos los clientes registrados."
+          }
+        },
+        {
+          "name": "Buscar cliente por ID",
+          "request": {
+            "method": "GET",
+            "url": "{{cliente_url}}/{{cliente_id}}",
+            "description": "Busca un cliente usando su id."
+          }
+        },
+        {
+          "name": "Crear cliente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dni\": \"72654321\",\n  \"nombres\": \"Miguel Luis\",\n  \"apellidos\": \"Lopez Sanchez\",\n  \"celular\": \"987654321\",\n  \"correo\": \"miguel@gmail.com\",\n  \"licencia\": \"Q12345678\",\n  \"estado\": \"ACTIVO\"\n}"
+            },
+            "url": "{{cliente_url}}",
+            "description": "Crea un cliente nuevo. DNI debe tener 8 digitos y celular 9 digitos."
+          }
+        },
+        {
+          "name": "Actualizar cliente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dni\": \"72654321\",\n  \"nombres\": \"Miguel Luis\",\n  \"apellidos\": \"Lopez Sanchez\",\n  \"celular\": \"999888777\",\n  \"correo\": \"miguel@gmail.com\",\n  \"licencia\": \"Q12345678\",\n  \"estado\": \"ACTIVO\"\n}"
+            },
+            "url": "{{cliente_url}}/{{cliente_id}}",
+            "description": "Actualiza todos los datos del cliente indicado."
+          }
+        },
+        {
+          "name": "Eliminar cliente",
+          "request": {
+            "method": "DELETE",
+            "url": "{{cliente_url}}/{{cliente_id}}",
+            "description": "Elimina un cliente por id."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Alquiler Transaccion",
+      "description": "Microservicio transaccional para registrar alquileres usando clienteId y vehiculoId.",
+      "item": [
+        {
+          "name": "Listar alquileres",
+          "request": {
+            "method": "GET",
+            "url": "{{alquiler_url}}",
+            "description": "Devuelve todos los alquileres registrados."
+          }
+        },
+        {
+          "name": "Buscar alquiler por ID",
+          "request": {
+            "method": "GET",
+            "url": "{{alquiler_url}}/{{alquiler_id}}",
+            "description": "Busca un alquiler usando su id."
+          }
+        },
+        {
+          "name": "Crear alquiler",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": 1,\n  \"vehiculoId\": 1,\n  \"dias\": 3,\n  \"fechaInicio\": \"2026-07-03\",\n  \"fechaFin\": \"2026-07-06\",\n  \"total\": 720,\n  \"estado\": \"ACTIVO\"\n}"
+            },
+            "url": "{{alquiler_url}}",
+            "description": "Crea un alquiler. Usa clienteId y vehiculoId como referencia a los otros microservicios."
+          }
+        },
+        {
+          "name": "Actualizar alquiler",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": 1,\n  \"vehiculoId\": 1,\n  \"dias\": 4,\n  \"fechaInicio\": \"2026-07-03\",\n  \"fechaFin\": \"2026-07-07\",\n  \"total\": 960,\n  \"estado\": \"ACTIVO\"\n}"
+            },
+            "url": "{{alquiler_url}}/{{alquiler_id}}",
+            "description": "Actualiza todos los datos del alquiler indicado."
+          }
+        },
+        {
+          "name": "Eliminar alquiler",
+          "request": {
+            "method": "DELETE",
+            "url": "{{alquiler_url}}/{{alquiler_id}}",
+            "description": "Elimina un alquiler por id."
+          }
+        }
+      ]
+    }
+  ]
+}
+

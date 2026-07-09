@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS clientes (
+    id BIGSERIAL PRIMARY KEY,
+    dni VARCHAR(8) NOT NULL,
+    nombres VARCHAR(100) NOT NULL,
+    apellidos VARCHAR(100) NOT NULL,
+    celular VARCHAR(9) NOT NULL,
+    correo VARCHAR(120) NOT NULL,
+    licencia VARCHAR(20) NOT NULL,
+    estado VARCHAR(20) NOT NULL
+);
+
