@@ -67,7 +67,7 @@
               "raw": "{\n  \"placa\": \"ABC-123\",\n  \"marca\": \"Toyota\",\n  \"modelo\": \"Corolla\",\n  \"anio\": 2026,\n  \"color\": \"Blanco\",\n  \"precioPorDia\": 150\n}"
             },
             "url": "{{vehiculo_url}}",
-            "description": "Crea un vehiculo nuevo. La placa usa formato ABC-123 y el estado se asigna como DISPONIBLE."
+            "description": "Crea un vehiculo nuevo. La placa usa formato ABC-123: 3 letras, guion y 3 numeros. El estado se asigna como DISPONIBLE."
           }
         },
         {

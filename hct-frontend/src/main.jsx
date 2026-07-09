@@ -5,6 +5,15 @@ import './styles.css';
 
 const today = new Date().toISOString().slice(0, 10);
 
+const vehicleModels = {
+  Toyota: ['Corolla', 'Yaris', 'Hilux', 'RAV4'],
+  Nissan: ['Versa', 'Sentra', 'Kicks', 'Frontier'],
+  Hyundai: ['Accent', 'Elantra', 'Tucson', 'Santa Fe'],
+  Kia: ['Rio', 'Cerato', 'Sportage', 'Sorento'],
+  Chevrolet: ['Onix', 'Tracker', 'Captiva', 'S10'],
+  Volkswagen: ['Gol', 'Polo', 'Jetta', 'Tiguan']
+};
+
 const services = {
   vehiculos: {
     key: 'vehiculos',
@@ -13,8 +22,8 @@ const services = {
     url: 'http://localhost:8081/api/vehiculos',
     empty: {
       placa: '',
-      marca: '',
-      modelo: '',
+      marca: 'Toyota',
+      modelo: 'Corolla',
       anio: 2026,
       color: '',
       precioPorDia: 150,
@@ -22,8 +31,8 @@ const services = {
     },
     fields: [
       ['placa', 'Placa'],
-      ['marca', 'Marca'],
-      ['modelo', 'Modelo'],
+      ['marca', 'Marca', 'select'],
+      ['modelo', 'Modelo', 'select'],
       ['anio', 'Anio', 'number'],
       ['color', 'Color'],
       ['precioPorDia', 'Precio por dia (S/)', 'number']
@@ -107,11 +116,17 @@ const services = {
 };
 
 function formatPlate(value) {
-  const clean = value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
-  if (clean.length <= 3) {
-    return clean;
+  const clean = value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const letters = clean.replace(/[^A-Z]/g, '').slice(0, 3);
+  const numbers = clean.replace(/[^0-9]/g, '').slice(0, 3);
+  if (!numbers) {
+    return letters;
   }
-  return `${clean.slice(0, 3)}-${clean.slice(3)}`;
+  return `${letters}-${numbers}`;
+}
+
+function formatOnlyLetters(value) {
+  return value.replace(/[^A-Za-z ]/g, '');
 }
 
 function formatMoney(value) {
@@ -164,10 +179,25 @@ function ResourcePanel({ config }) {
   }, [config.url]);
 
   function changeField(key, type, value) {
-    setForm((current) => ({
-      ...current,
-      [key]: key === 'placa' ? formatPlate(value) : normalizeValue(type, value)
-    }));
+    setForm((current) => {
+      if (key === 'placa') {
+        return { ...current, placa: formatPlate(value) };
+      }
+      if (key === 'color') {
+        return { ...current, color: formatOnlyLetters(value) };
+      }
+      if (key === 'marca') {
+        return {
+          ...current,
+          marca: value,
+          modelo: vehicleModels[value][0]
+        };
+      }
+      return {
+        ...current,
+        [key]: normalizeValue(type, value)
+      };
+    });
   }
 
   async function changeVehicleStatus(id, estado) {
@@ -206,10 +236,14 @@ function ResourcePanel({ config }) {
     setLoading(true);
     setMessage('');
     try {
+      const payload = config.fields.reduce((next, [key]) => {
+        next[key] = form[key];
+        return next;
+      }, {});
       const response = await fetch(editingId ? `${config.url}/${editingId}` : config.url, {
         method: editingId ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
+        body: JSON.stringify(payload)
       });
       if (!response.ok) throw new Error();
       cancel();
@@ -262,14 +296,30 @@ function ResourcePanel({ config }) {
           {config.fields.map(([key, label, type = 'text']) => (
             <label key={key}>
               <span>{label}</span>
-              <input
-                type={type}
-                value={form[key]}
-                onChange={(event) => changeField(key, type, event.target.value)}
-                maxLength={key === 'placa' ? 7 : undefined}
-                placeholder={key === 'placa' ? 'ABC-123' : undefined}
-                required
-              />
+              {type === 'select' ? (
+                <select
+                  value={form[key]}
+                  onChange={(event) => changeField(key, type, event.target.value)}
+                  required
+                >
+                  {(key === 'marca' ? Object.keys(vehicleModels) : vehicleModels[form.marca] ?? []).map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type={type}
+                  value={form[key]}
+                  onChange={(event) => changeField(key, type, event.target.value)}
+                  maxLength={key === 'placa' ? 7 : undefined}
+                  placeholder={key === 'placa' ? 'ABC-123' : undefined}
+                  pattern={key === 'placa' ? '[A-Z]{3}-[0-9]{3}' : key === 'color' ? '[A-Za-z ]+' : undefined}
+                  min={type === 'number' ? 1 : undefined}
+                  required
+                />
+              )}
             </label>
           ))}
         </div>

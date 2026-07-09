@@ -113,7 +113,9 @@ curl -X POST http://localhost:8081/api/vehiculos \
 ```
 
 El estado se asigna automaticamente como `DISPONIBLE`.
-La placa usa 6 caracteres en formato `ABC-123`.
+La placa usa formato `ABC-123`: 3 letras, guion y 3 numeros.
+El color acepta solo letras.
+En el frontend, la marca se elige de una lista y los modelos cambian segun la marca.
 El precio se muestra en el frontend como `S/ 150.00`.
 
 ### Crear cliente

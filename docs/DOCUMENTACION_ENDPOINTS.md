@@ -114,11 +114,11 @@ El precio se muestra en el frontend con moneda peruana: `S/`.
 
 Validaciones basicas:
 
-- `placa`: obligatorio, formato `ABC-123`. Son 6 caracteres maximo y un guion al medio.
+- `placa`: obligatorio, formato `ABC-123`. Son 3 letras, guion y 3 numeros.
 - `marca`: obligatorio.
 - `modelo`: obligatorio.
 - `anio`: obligatorio, minimo 2000.
-- `color`: obligatorio.
+- `color`: obligatorio, solo letras.
 - `precioPorDia`: obligatorio, mayor o igual a 1.
 
 ### PUT /api/vehiculos/{id}
