@@ -3,8 +3,11 @@ import { createRoot } from 'react-dom/client';
 import { Car, Check, Edit3, RefreshCw, Save, Trash2, User, WalletCards, X } from 'lucide-react';
 import './styles.css';
 
+const today = new Date().toISOString().slice(0, 10);
+
 const services = {
   vehiculos: {
+    key: 'vehiculos',
     title: 'Vehiculos',
     icon: Car,
     url: 'http://localhost:8081/api/vehiculos',
@@ -23,7 +26,7 @@ const services = {
       ['modelo', 'Modelo'],
       ['anio', 'Anio', 'number'],
       ['color', 'Color'],
-      ['precioPorDia', 'Precio por dia', 'number']
+      ['precioPorDia', 'Precio por dia (S/)', 'number']
     ],
     tableFields: [
       ['placa', 'Placa'],
@@ -33,9 +36,11 @@ const services = {
       ['color', 'Color'],
       ['precioPorDia', 'Precio por dia'],
       ['estado', 'Estado']
-    ]
+    ],
+    moneyFields: ['precioPorDia']
   },
   clientes: {
+    key: 'clientes',
     title: 'Clientes',
     icon: User,
     url: 'http://localhost:8082/api/clientes',
@@ -67,6 +72,7 @@ const services = {
     ]
   },
   alquileres: {
+    key: 'alquileres',
     title: 'Alquileres',
     icon: WalletCards,
     url: 'http://localhost:8083/api/alquileres',
@@ -74,8 +80,8 @@ const services = {
       clienteId: 1,
       vehiculoId: 1,
       dias: 3,
-      fechaInicio: '2026-07-03',
-      fechaFin: '2026-07-06',
+      fechaInicio: today,
+      fechaFin: today,
       total: 720,
       estado: 'ACTIVO'
     },
@@ -85,7 +91,7 @@ const services = {
       ['dias', 'Dias', 'number'],
       ['fechaInicio', 'Fecha inicio', 'date'],
       ['fechaFin', 'Fecha fin', 'date'],
-      ['total', 'Total', 'number']
+      ['total', 'Total (S/)', 'number']
     ],
     tableFields: [
       ['clienteId', 'Cliente ID'],
@@ -95,9 +101,32 @@ const services = {
       ['fechaFin', 'Fecha fin'],
       ['total', 'Total'],
       ['estado', 'Estado']
-    ]
+    ],
+    moneyFields: ['total']
   }
 };
+
+function formatPlate(value) {
+  const clean = value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+  if (clean.length <= 3) {
+    return clean;
+  }
+  return `${clean.slice(0, 3)}-${clean.slice(3)}`;
+}
+
+function formatMoney(value) {
+  if (value === null || value === undefined || value === '') {
+    return '';
+  }
+  return `S/ ${Number(value).toFixed(2)}`;
+}
+
+function formatCell(config, field, value) {
+  if (config.moneyFields?.includes(field)) {
+    return formatMoney(value);
+  }
+  return value;
+}
 
 function normalizeValue(type, value) {
   if (type === 'number') {
@@ -137,8 +166,23 @@ function ResourcePanel({ config }) {
   function changeField(key, type, value) {
     setForm((current) => ({
       ...current,
-      [key]: normalizeValue(type, value)
+      [key]: key === 'placa' ? formatPlate(value) : normalizeValue(type, value)
     }));
+  }
+
+  async function changeVehicleStatus(id, estado) {
+    setLoading(true);
+    setMessage('');
+    try {
+      const response = await fetch(`${config.url}/${id}/estado?estado=${estado}`, { method: 'PUT' });
+      if (!response.ok) throw new Error();
+      await loadItems();
+      setMessage('Estado actualizado.');
+    } catch (error) {
+      setMessage('');
+    } finally {
+      setLoading(false);
+    }
   }
 
   function edit(item) {
@@ -222,6 +266,8 @@ function ResourcePanel({ config }) {
                 type={type}
                 value={form[key]}
                 onChange={(event) => changeField(key, type, event.target.value)}
+                maxLength={key === 'placa' ? 7 : undefined}
+                placeholder={key === 'placa' ? 'ABC-123' : undefined}
                 required
               />
             </label>
@@ -245,12 +291,30 @@ function ResourcePanel({ config }) {
               <tr key={item.id}>
                 <td>{item.id}</td>
                 {visibleFields.map((field) => (
-                  <td key={field}>{item[field]}</td>
+                  <td key={field}>{formatCell(config, field, item[field])}</td>
                 ))}
                 <td className="row-actions">
                   <button type="button" className="icon-button" onClick={() => edit(item)} title="Editar">
                     <Edit3 size={16} />
                   </button>
+                  {config.key === 'vehiculos' && (
+                    <>
+                      <button
+                        type="button"
+                        className="status-button"
+                        onClick={() => changeVehicleStatus(item.id, 'DISPONIBLE')}
+                      >
+                        Disponible
+                      </button>
+                      <button
+                        type="button"
+                        className="status-button"
+                        onClick={() => changeVehicleStatus(item.id, 'FUERA_SERVICIO')}
+                      >
+                        Fuera servicio
+                      </button>
+                    </>
+                  )}
                   <button type="button" className="icon-button danger" onClick={() => remove(item.id)} title="Eliminar">
                     <Trash2 size={16} />
                   </button>

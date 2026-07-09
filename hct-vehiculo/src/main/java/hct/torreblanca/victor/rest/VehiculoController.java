@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -43,6 +44,13 @@ public class VehiculoController {
     @PutMapping("/{id}")
     public Mono<ResponseEntity<Vehiculo>> actualizar(@PathVariable Long id, @Valid @RequestBody Vehiculo vehiculo) {
         return service.actualizar(id, vehiculo)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{id}/estado")
+    public Mono<ResponseEntity<Vehiculo>> cambiarEstado(@PathVariable Long id, @RequestParam String estado) {
+        return service.cambiarEstado(id, estado)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }

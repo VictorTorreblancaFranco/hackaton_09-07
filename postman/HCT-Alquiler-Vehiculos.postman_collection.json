@@ -67,7 +67,7 @@
               "raw": "{\n  \"placa\": \"ABC-123\",\n  \"marca\": \"Toyota\",\n  \"modelo\": \"Corolla\",\n  \"anio\": 2026,\n  \"color\": \"Blanco\",\n  \"precioPorDia\": 150\n}"
             },
             "url": "{{vehiculo_url}}",
-            "description": "Crea un vehiculo nuevo. La placa es texto simple, el anio es numerico y precioPorDia es decimal."
+            "description": "Crea un vehiculo nuevo. La placa usa formato ABC-123 y el estado se asigna como DISPONIBLE."
           }
         },
         {
@@ -94,6 +94,22 @@
             "method": "DELETE",
             "url": "{{vehiculo_url}}/{{vehiculo_id}}",
             "description": "Elimina un vehiculo por id."
+          }
+        },
+        {
+          "name": "Marcar vehiculo fuera de servicio",
+          "request": {
+            "method": "PUT",
+            "url": "{{vehiculo_url}}/{{vehiculo_id}}/estado?estado=FUERA_SERVICIO",
+            "description": "Cambia el estado del vehiculo a FUERA_SERVICIO."
+          }
+        },
+        {
+          "name": "Marcar vehiculo disponible",
+          "request": {
+            "method": "PUT",
+            "url": "{{vehiculo_url}}/{{vehiculo_id}}/estado?estado=DISPONIBLE",
+            "description": "Cambia el estado del vehiculo a DISPONIBLE."
           }
         }
       ]
@@ -196,10 +212,10 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"clienteId\": 1,\n  \"vehiculoId\": 1,\n  \"dias\": 3,\n  \"fechaInicio\": \"2026-07-03\",\n  \"fechaFin\": \"2026-07-06\",\n  \"total\": 720\n}"
+              "raw": "{\n  \"clienteId\": 1,\n  \"vehiculoId\": 1,\n  \"dias\": 3,\n  \"fechaInicio\": \"2026-07-09\",\n  \"fechaFin\": \"2026-07-12\",\n  \"total\": 720\n}"
             },
             "url": "{{alquiler_url}}",
-            "description": "Crea un alquiler. Usa clienteId y vehiculoId como referencia a los otros microservicios."
+            "description": "Crea un alquiler. Usa clienteId y vehiculoId. Al guardar, el vehiculo pasa a EN_ALQUILER."
           }
         },
         {
@@ -214,7 +230,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"clienteId\": 1,\n  \"vehiculoId\": 1,\n  \"dias\": 4,\n  \"fechaInicio\": \"2026-07-03\",\n  \"fechaFin\": \"2026-07-07\",\n  \"total\": 960\n}"
+              "raw": "{\n  \"clienteId\": 1,\n  \"vehiculoId\": 1,\n  \"dias\": 4,\n  \"fechaInicio\": \"2026-07-09\",\n  \"fechaFin\": \"2026-07-13\",\n  \"total\": 960\n}"
             },
             "url": "{{alquiler_url}}/{{alquiler_id}}",
             "description": "Actualiza todos los datos del alquiler indicado."

@@ -113,6 +113,8 @@ curl -X POST http://localhost:8081/api/vehiculos \
 ```
 
 El estado se asigna automaticamente como `DISPONIBLE`.
+La placa usa 6 caracteres en formato `ABC-123`.
+El precio se muestra en el frontend como `S/ 150.00`.
 
 ### Crear cliente
 
@@ -130,6 +132,9 @@ curl -X POST http://localhost:8082/api/clientes \
 ```
 
 El estado se asigna automaticamente como `ACTIVO`.
+Al crear el alquiler, el vehiculo pasa automaticamente a `EN_ALQUILER`.
+El total se muestra en el frontend como `S/ 720.00`.
+En el frontend, la fecha de inicio aparece por defecto con la fecha de hoy y se puede modificar.
 
 ### Crear alquiler
 
@@ -140,8 +145,8 @@ curl -X POST http://localhost:8083/api/alquileres \
     "clienteId": 1,
     "vehiculoId": 1,
     "dias": 3,
-    "fechaInicio": "2026-07-03",
-    "fechaFin": "2026-07-06",
+    "fechaInicio": "2026-07-09",
+    "fechaFin": "2026-07-12",
     "total": 720
   }'
 ```

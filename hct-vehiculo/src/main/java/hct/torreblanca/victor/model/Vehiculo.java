@@ -23,7 +23,7 @@ public class Vehiculo {
     private Long id;
 
     @NotBlank
-    @Pattern(regexp = "^[A-Z0-9-]{6,10}$")
+    @Pattern(regexp = "^[A-Z0-9]{3}-[A-Z0-9]{3}$")
     private String placa;
 
     @NotBlank

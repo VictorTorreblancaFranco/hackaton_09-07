@@ -110,10 +110,11 @@ Body:
 ```
 
 El campo `estado` no se envia al crear. El sistema lo asigna automaticamente como `DISPONIBLE`.
+El precio se muestra en el frontend con moneda peruana: `S/`.
 
 Validaciones basicas:
 
-- `placa`: obligatorio, entre 6 y 10 caracteres usando mayusculas, numeros o guion.
+- `placa`: obligatorio, formato `ABC-123`. Son 6 caracteres maximo y un guion al medio.
 - `marca`: obligatorio.
 - `modelo`: obligatorio.
 - `anio`: obligatorio, minimo 2000.
@@ -152,6 +153,25 @@ Ejemplo:
 ```text
 DELETE http://localhost:8081/api/vehiculos/1
 ```
+
+### PUT /api/vehiculos/{id}/estado?estado=FUERA_SERVICIO
+
+Cambia el estado del vehiculo.
+
+Ejemplos:
+
+```text
+PUT http://localhost:8081/api/vehiculos/1/estado?estado=FUERA_SERVICIO
+PUT http://localhost:8081/api/vehiculos/1/estado?estado=DISPONIBLE
+```
+
+Uso basico:
+
+- `DISPONIBLE`: el auto se puede alquilar.
+- `EN_ALQUILER`: el sistema lo coloca cuando se registra un alquiler.
+- `FUERA_SERVICIO`: el auto no se debe alquilar por mantenimiento u otro motivo.
+
+Desde el frontend, estos estados se controlan desde la tabla de vehiculos.
 
 ## Microservicio Cliente
 
@@ -290,6 +310,8 @@ alquileres
 
 Este es el microservicio transaccional porque registra la operacion de alquiler.
 Usa `clienteId` y `vehiculoId` para relacionar el alquiler con un cliente y un vehiculo.
+Cuando se crea un alquiler, el vehiculo pasa de `DISPONIBLE` a `EN_ALQUILER`.
+Si un vehiculo esta en `EN_ALQUILER` o `FUERA_SERVICIO`, no se debe usar para un nuevo alquiler.
 
 ### GET /api/alquileres
 
@@ -304,8 +326,8 @@ Respuesta ejemplo:
     "clienteId": 1,
     "vehiculoId": 1,
     "dias": 3,
-    "fechaInicio": "2026-07-03",
-    "fechaFin": "2026-07-06",
+    "fechaInicio": "2026-07-09",
+    "fechaFin": "2026-07-12",
     "total": 720,
     "estado": "ACTIVO"
   }
@@ -336,13 +358,15 @@ Body:
   "clienteId": 1,
   "vehiculoId": 1,
   "dias": 3,
-  "fechaInicio": "2026-07-03",
-  "fechaFin": "2026-07-06",
+  "fechaInicio": "2026-07-09",
+  "fechaFin": "2026-07-12",
   "total": 720
 }
 ```
 
 El campo `estado` no se envia al crear. El sistema lo asigna automaticamente como `ACTIVO`.
+El campo `total` se muestra en el frontend con moneda peruana: `S/`.
+En el frontend, `fechaInicio` se carga por defecto con la fecha actual y se puede modificar.
 
 Validaciones basicas:
 
@@ -370,8 +394,8 @@ Body:
   "clienteId": 1,
   "vehiculoId": 1,
   "dias": 4,
-  "fechaInicio": "2026-07-03",
-  "fechaFin": "2026-07-07",
+  "fechaInicio": "2026-07-09",
+  "fechaFin": "2026-07-13",
   "total": 960
 }
 ```

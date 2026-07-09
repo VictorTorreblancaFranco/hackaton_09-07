@@ -36,6 +36,14 @@ public class VehiculoService {
                 });
     }
 
+    public Mono<Vehiculo> cambiarEstado(Long id, String estado) {
+        return repository.findById(id)
+                .flatMap(vehiculo -> {
+                    vehiculo.setEstado(estado);
+                    return repository.save(vehiculo);
+                });
+    }
+
     public Mono<Void> eliminar(Long id) {
         return repository.deleteById(id);
     }
