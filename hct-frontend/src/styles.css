@@ -130,16 +130,20 @@ select {
   display: grid;
   gap: 12px;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  align-items: start;
 }
 
 label {
   display: grid;
   gap: 6px;
+  grid-template-rows: 18px auto 18px;
+  min-height: 88px;
 }
 
 label span {
   color: #475467;
   font-size: 13px;
+  line-height: 18px;
 }
 
 .picker-field {
@@ -160,7 +164,7 @@ label span {
   cursor: pointer;
   display: flex;
   justify-content: space-between;
-  min-height: 54px;
+  height: 54px;
   padding: 8px 10px;
   text-align: left;
   width: 100%;
@@ -169,11 +173,21 @@ label span {
 .picker-trigger span {
   display: grid;
   gap: 2px;
+  min-width: 0;
 }
 
 .picker-trigger small {
   color: #667085;
   font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.picker-trigger strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .picker-panel {
@@ -215,7 +229,6 @@ label span {
 }
 
 .picker-card small,
-.field-help,
 .empty-inline {
   color: #667085;
   font-size: 12px;
@@ -229,7 +242,7 @@ input,
 select {
   border: 1px solid #cbd4e1;
   border-radius: 8px;
-  min-height: 40px;
+  height: 40px;
   padding: 8px 10px;
   width: 100%;
 }
@@ -244,9 +257,19 @@ select.field-error {
   outline: 2px solid #fee2e2;
 }
 
+.helper-text {
+  color: #667085;
+  display: block;
+  font-size: 12px;
+  line-height: 16px;
+  min-height: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .error-text {
   color: #dc2626;
-  font-size: 12px;
 }
 
 input:focus,

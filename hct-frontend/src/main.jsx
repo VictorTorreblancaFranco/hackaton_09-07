@@ -379,6 +379,14 @@ function ResourcePanel({ config }) {
     return Object.keys(nextErrors).length === 0;
   }
 
+  function helperText(key) {
+    if (errors[key]) return errors[key];
+    if (config.key === 'alquileres' && key === 'total' && vehiculoSeleccionado) {
+      return `${formatMoney(vehiculoSeleccionado.precioPorDia)} x ${form.dias || 1} dias`;
+    }
+    return '';
+  }
+
   async function save(event) {
     event.preventDefault();
     if (!validateForm()) {
@@ -556,10 +564,9 @@ function ResourcePanel({ config }) {
                   readOnly={config.key === 'alquileres' && (key === 'fechaFin' || key === 'total')}
                 />
               )}
-              {errors[key] && <small className="error-text">{errors[key]}</small>}
-              {config.key === 'alquileres' && key === 'total' && vehiculoSeleccionado && (
-                <small className="field-help">{formatMoney(vehiculoSeleccionado.precioPorDia)} x {form.dias || 1} dias</small>
-              )}
+              <small className={errors[key] ? 'helper-text error-text' : 'helper-text'}>
+                {helperText(key)}
+              </small>
             </label>
           ))}
         </div>
