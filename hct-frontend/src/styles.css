@@ -238,6 +238,17 @@ input:read-only {
   background: #f8fafc;
 }
 
+input.field-error,
+select.field-error {
+  border-color: #dc2626;
+  outline: 2px solid #fee2e2;
+}
+
+.error-text {
+  color: #dc2626;
+  font-size: 12px;
+}
+
 input:focus,
 select:focus {
   border-color: #2563eb;

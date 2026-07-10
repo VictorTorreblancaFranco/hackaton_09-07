@@ -179,6 +179,18 @@ function normalizeValue(type, value) {
   return value;
 }
 
+function validateField(key, value) {
+  const text = String(value ?? '').trim();
+  if (!text) return 'Campo obligatorio.';
+  if (key === 'dni' && !/^[0-9]{8}$/.test(text)) return 'El DNI debe tener exactamente 8 digitos.';
+  if (key === 'celular' && !/^9[0-9]{8}$/.test(text)) return 'El celular debe tener 9 digitos y empezar con 9.';
+  if (key === 'correo' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text)) return 'Ingresa un correo valido, por ejemplo nombre@gmail.com.';
+  if (key === 'licencia' && !/^Q[0-9]{8}$/.test(text)) return 'La licencia debe tener el formato Q12345678.';
+  if (key === 'color' && !/^[A-Za-z ]+$/.test(text)) return 'El color solo debe tener letras.';
+  if (key === 'placa' && !/^(?=.*[A-Z0-9])[A-Z0-9-]{1,6}$/.test(text)) return 'La placa debe tener maximo 6 caracteres, solo letras, numeros o guion.';
+  return '';
+}
+
 function ResourcePanel({ config }) {
   const [items, setItems] = useState([]);
   const [form, setForm] = useState(config.empty);
@@ -188,6 +200,7 @@ function ResourcePanel({ config }) {
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [errors, setErrors] = useState({});
 
   const tableFields = config.tableFields ?? config.fields;
   const visibleFields = useMemo(() => tableFields.map(([key]) => key), [tableFields]);
@@ -273,6 +286,7 @@ function ResourcePanel({ config }) {
   }
 
   function changeField(key, type, value) {
+    setErrors((current) => ({ ...current, [key]: '' }));
     setForm((current) => {
       if (key === 'placa') {
         return { ...current, placa: formatPlate(value) };
@@ -351,11 +365,26 @@ function ResourcePanel({ config }) {
     setEditingId(null);
     setForm(config.empty);
     setOpenPicker(null);
+    setErrors({});
     setMessage('');
+  }
+
+  function validateForm() {
+    const nextErrors = {};
+    config.fields.forEach(([key]) => {
+      const error = validateField(key, form[key]);
+      if (error) nextErrors[key] = error;
+    });
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
   }
 
   async function save(event) {
     event.preventDefault();
+    if (!validateForm()) {
+      Swal.fire('Revisa los datos', 'Corrige los campos marcados antes de guardar.', 'warning');
+      return;
+    }
     setLoading(true);
     setMessage('');
     try {
@@ -375,6 +404,7 @@ function ResourcePanel({ config }) {
       setMessage(editingId ? 'Registro actualizado.' : 'Registro creado.');
     } catch (error) {
       setMessage('');
+      Swal.fire('No se pudo guardar', 'Revisa que los datos cumplan el formato solicitado.', 'warning');
     } finally {
       setLoading(false);
     }
@@ -414,7 +444,7 @@ function ResourcePanel({ config }) {
 
   return (
     <section className="resource">
-      <form className="form" onSubmit={save}>
+      <form className="form" onSubmit={save} noValidate>
         <div className="form-header">
           <h2>{editingId ? `Editar ${config.title}` : `Nuevo ${config.title}`}</h2>
           <div className="actions">
@@ -521,24 +551,12 @@ function ResourcePanel({ config }) {
                   onChange={(event) => changeField(key, type, event.target.value)}
                   maxLength={key === 'placa' ? 6 : key === 'dni' ? 8 : key === 'celular' ? 9 : key === 'licencia' ? 9 : undefined}
                   placeholder={key === 'placa' ? 'ABC12' : key === 'dni' ? '12345678' : key === 'celular' ? '987654321' : key === 'licencia' ? 'Q12345678' : undefined}
-                  pattern={
-                    key === 'placa'
-                      ? '.*[A-Z0-9].*'
-                      : key === 'color'
-                        ? '[A-Za-z ]+'
-                        : key === 'dni'
-                          ? '[0-9]{8}'
-                          : key === 'celular'
-                            ? '9[0-9]{8}'
-                            : key === 'licencia'
-                              ? 'Q[0-9]{8}'
-                              : undefined
-                  }
+                  className={errors[key] ? 'field-error' : undefined}
                   min={type === 'number' ? 1 : undefined}
                   readOnly={config.key === 'alquileres' && (key === 'fechaFin' || key === 'total')}
-                  required
                 />
               )}
+              {errors[key] && <small className="error-text">{errors[key]}</small>}
               {config.key === 'alquileres' && key === 'total' && vehiculoSeleccionado && (
                 <small className="field-help">{formatMoney(vehiculoSeleccionado.precioPorDia)} x {form.dias || 1} dias</small>
               )}
