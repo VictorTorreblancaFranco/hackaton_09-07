@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: hct-cliente
-          image: victortorreblancafranco/hct-cliente:latest
+          image: victor2202/hct-cliente:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8082

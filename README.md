@@ -197,19 +197,19 @@ Cada proyecto tiene su `Dockerfile`.
 Ejemplo para construir imagenes:
 
 ```bash
-docker build -t victortorreblancafranco/hct-vehiculo:latest hct-vehiculo
-docker build -t victortorreblancafranco/hct-cliente:latest hct-cliente
-docker build -t victortorreblancafranco/hct-alquiler:latest hct-alquiler
-docker build -t victortorreblancafranco/hct-frontend:latest hct-frontend
+docker build -t victor2202/hct-vehiculo:latest hct-vehiculo
+docker build -t victor2202/hct-cliente:latest hct-cliente
+docker build -t victor2202/hct-alquiler:latest hct-alquiler
+docker build -t victor2202/hct-frontend:latest hct-frontend
 ```
 
 Ejemplo para subir a DockerHub:
 
 ```bash
-docker push victortorreblancafranco/hct-vehiculo:latest
-docker push victortorreblancafranco/hct-cliente:latest
-docker push victortorreblancafranco/hct-alquiler:latest
-docker push victortorreblancafranco/hct-frontend:latest
+docker push victor2202/hct-vehiculo:latest
+docker push victor2202/hct-cliente:latest
+docker push victor2202/hct-alquiler:latest
+docker push victor2202/hct-frontend:latest
 ```
 
 ## Kubernetes
@@ -240,11 +240,10 @@ http://localhost:30080
 
 Para que el frontend desplegado pueda consultar a los backends durante una demo local, usar port-forward de los 3 servicios backend o exponerlos tambien por NodePort/Ingress.
 
-## Nota sobre JDK 26
+## Nota sobre Java
 
-El codigo esta configurado con `<java.version>26</java.version>`.
-Con el entorno actual, `mvn compile` y `mvn package` funcionan en los 3 servicios.
-Para evitar problemas del `spring-boot:repackage` con classfile major 70 de JDK 26, se desactivo solo ese reempaquetado automatico. Para ejecutar durante la exposicion usa:
+Los microservicios estan configurados con `<java.version>21</java.version>` para compilar correctamente con Spring Boot.
+En local tambien se probaron ejecutandose con Java 26. Para ejecutar durante la exposicion usa:
 
 ```bash
 mvn spring-boot:run

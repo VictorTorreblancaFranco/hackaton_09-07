@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: hct-alquiler
-          image: victortorreblancafranco/hct-alquiler:latest
+          image: victor2202/hct-alquiler:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8083

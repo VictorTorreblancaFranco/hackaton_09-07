@@ -179,10 +179,10 @@ El objetivo es convertir cada proyecto en una imagen para poder desplegarla.
 Imagenes usadas en los manifiestos:
 
 ```text
-victortorreblancafranco/hct-vehiculo:latest
-victortorreblancafranco/hct-cliente:latest
-victortorreblancafranco/hct-alquiler:latest
-victortorreblancafranco/hct-frontend:latest
+victor2202/hct-vehiculo:latest
+victor2202/hct-cliente:latest
+victor2202/hct-alquiler:latest
+victor2202/hct-frontend:latest
 ```
 
 ## Kubernetes

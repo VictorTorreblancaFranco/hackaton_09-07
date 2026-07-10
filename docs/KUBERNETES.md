@@ -25,10 +25,10 @@ Cada carpeta contiene:
 Los deployments usan estas imagenes:
 
 ```text
-victortorreblancafranco/hct-vehiculo:latest
-victortorreblancafranco/hct-cliente:latest
-victortorreblancafranco/hct-alquiler:latest
-victortorreblancafranco/hct-frontend:latest
+victor2202/hct-vehiculo:latest
+victor2202/hct-cliente:latest
+victor2202/hct-alquiler:latest
+victor2202/hct-frontend:latest
 ```
 
 Si usas otro usuario de DockerHub, cambia el campo `image` en cada deployment.

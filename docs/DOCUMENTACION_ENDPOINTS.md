@@ -4,7 +4,7 @@ Sistema: alquiler de vehiculos.
 
 Tecnologias:
 
-- Java 26
+- Java 21+ (probado localmente con Java 26)
 - Spring Boot
 - Spring WebFlux
 - Spring Data R2DBC
